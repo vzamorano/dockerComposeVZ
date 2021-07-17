@@ -76,7 +76,7 @@ localhost:8081
 ```
 localhost:9001
 ```
-4. EndPoint of Python App:
+4. EndPoint of pythonappVZ:
 ```
 localhost:9001/dockerEndpoint
 ```
@@ -84,3 +84,5 @@ localhost:9001/dockerEndpoint
 ```
 localhost:9000
 ```
+
+![Docker Compose](https://oualid.me/static/d86e4a390573a9521bc71c5e28409990/210c1/banner.webp)
