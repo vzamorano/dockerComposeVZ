@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+    jenkins:
+        image: jenkins/jenkins
+        container_name: jenkins_compose_vz
+        ports:
+            - 8080:8080
+            - 50000:50000
+        networks:
+            - network_vz
+        volumes:
+            - jenkins_data:/var/jenkins_home 
+    nexus:
+        image: sonatype/nexus3
+        container_name: nexus_compose_vz
+        ports:
+            - 8081:8081
+        depends_on:
+            - jenkins
+        networks:
+            - network_vz
+        volumes:
+            - nexus_data:/tmp 
+
+    pythonappVZ:
+        image: vzamorano/multistagevz:vivian.zamorano
+        container_name: pythonapp_compose_vz
+        ports:
+            - 9001:9001
+        depends_on:
+            - nexus
+        networks:
+            - network_vz
+        volumes:
+            - pythonapp_data:/tmp
+
+    database:
+        image: postgres
+        container_name: postgres_db_vz
+        environment:
+            - POSTGRES_USER=root
+            - POSTGRES_PASSWORD=mysecretpassword
+        depends_on:
+            - pythonappVZ
+        networks:
+            - network_vz
+        volumes:
+            - postgres_data:/tmp
+
+    sonarqube:
+        image: sonarqube
+        container_name: sonarqube_compose_vz
+        ports:
+            - 9000:9000
+        environment:
+            - "sonar.jdbc.url:jdbc:postgresql://postgres_db_vz/postgres_db_vz"
+            - "sonar.jdbc.username:root"
+            - "sonar.jdbc.password:mysecretpassword"
+        depends_on:
+            - database
+        networks:
+            - network_vz
+        volumes:
+            - sonarqube_data:/tmp
+
+networks:
+    network_vz:
+
+volumes:
+    jenkins_data:
+    nexus_data:
+    pythonapp_data:
+    postgres_data:
+    sonarqube_data:
